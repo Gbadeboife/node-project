@@ -24,6 +24,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/api/v1/shipping_dock', require('./routes/shipping_dock'));
+app.use('/api/v1/order', require('./routes/order'));
+app.use('/api/v1/transaction', require('./routes/transaction'));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
