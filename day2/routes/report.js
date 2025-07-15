@@ -2,20 +2,16 @@ const express = require('express');
 const router = express.Router();
 const db = require('../models');
 const Transaction = db.Transaction;
+const Order = db.Order;
 const { Op, fn, col, literal } = require('sequelize');
 
 // GET /api/v1/report/sale?month=1&year
 router.get('/sale', async (req, res) => {
   try {
-    const { month, year, from_date, to_date } = req.query;
+    const { month, year} = req.query;
     let where = {};
     if (month && year) {
       where = literal(`MONTH(created_at) = ${parseInt(month)} AND YEAR(created_at) = ${parseInt(year)}`);
-    } else if (from_date && to_date) {
-      let from = new Date(from_date);
-      let to = new Date(to_date);
-      if (from > to) [from, to] = [to, from];
-      where = { created_at: { [Op.between]: [from, to] } };
     } else {
       return res.status(400).json({ error: 'Invalid parameters' });
     }
@@ -112,7 +108,7 @@ router.get('/user/count', async (req, res) => {
     // Get all months (1-12)
     const months = Array.from({ length: 12 }, (_, i) => i + 1);
     // Get counts per month
-    const results = await Transaction.findAll({
+    const results = await Order.findAll({
       attributes: [
         [fn('MONTH', col('created_at')), 'month'],
         [fn('COUNT', col('id')), 'order_count']

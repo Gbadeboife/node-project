@@ -42,7 +42,7 @@ router.get('/', async (req, res) => {
 // GET /api/v1/order/sort (pagination + sorting)
 router.get('/sort', async (req, res) => {
   try {
-    let { page = 1, limit = 10, sort = 'id', direction = 'ASC' } = req.query;
+    let { page, limit, sort, direction } = req.query;
     page = parseInt(page);
     limit = parseInt(limit);
     direction = direction.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
@@ -65,7 +65,7 @@ router.get('/sort', async (req, res) => {
 // GET /api/v1/order/cursor (cursor-based pagination)
 router.get('/cursor', async (req, res) => {
   try {
-    let { id = 0, limit = 10 } = req.query;
+    let { id, limit } = req.query;
     id = parseInt(id);
     limit = parseInt(limit);
     const orders = await Order.findAll({
