@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const rules = sequelize.define(
-    "rules",
+  const Rule = sequelize.define(
+    "rule",
     {
       id: {
         type: DataTypes.INTEGER,
@@ -10,19 +10,15 @@ module.exports = (sequelize, DataTypes) => {
       name: DataTypes.STRING,
       condition: DataTypes.STRING,
       action: DataTypes.STRING,
-      created_at: DataTypes.DATEONLY,
-      updated_at: DataTypes.DATE,
+
     },
     {
       timestamps: true,
       freezeTableName: true,
-      tableName: "rules",
+      tableName: "rule",
     },
-    {
-      underscoredAll: false,
-      underscored: false,
-    }
+
   );
 
-  return rules;
+  return Rule;
 };
