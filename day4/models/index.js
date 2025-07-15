@@ -63,6 +63,12 @@ Object.keys(db).forEach((modelName) => {
   }
 });
 
+// Add associations
+if (db.email_queue && db.email && db.user) {
+  db.email_queue.belongsTo(db.email, { foreignKey: 'email_id' });
+  db.email_queue.belongsTo(db.user, { foreignKey: 'user_id' });
+}
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
