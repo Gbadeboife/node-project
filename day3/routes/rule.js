@@ -1,14 +1,14 @@
 var express = require('express');
 var router = express.Router();
 const db = require('../models');
-const { Rule } = db;
+const { Rules } = db;
 const { Variable } = db;
 const atob = (str) => Buffer.from(str, 'base64').toString('utf-8');
 
 // GET /api/v1/rules (get all)
 router.get('/', async (req, res) => {
   try {
-    const allRules = await Rule.findAll();
+    const allRules = await Rules.findAll();
     res.json(allRules);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 // GET /api/v1/rules/:id (get one)
 router.get('/:id', async (req, res) => {
   try {
-    const rule = await Rule.findByPk(req.params.id);
+    const rule = await Rules.findByPk(req.params.id);
     if (!rule) return res.status(404).json({ error: 'Rule not found' });
     res.json(rule);
   } catch (err) {
@@ -30,7 +30,7 @@ router.get('/:id', async (req, res) => {
 router.post('/:id', async (req, res) => {
   try {
     const { name, condition, action } = req.body;
-    const newRule = await Rule.create({
+    const newRule = await Rules.create({
       id: req.params.id,
       name,
       condition,
@@ -48,12 +48,12 @@ router.post('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { name, condition, action } = req.body;
-    const [updated] = await Rule.update(
+    const [updated] = await Rules.update(
       { name, condition, action, updated_at: new Date() },
       { where: { id: req.params.id } }
     );
     if (!updated) return res.status(404).json({ error: 'Rule not found' });
-    const updatedRule = await Rule.findByPk(req.params.id);
+    const updatedRule = await Rules.findByPk(req.params.id);
     res.json(updatedRule);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -63,7 +63,7 @@ router.put('/:id', async (req, res) => {
 // DELETE /api/v1/rules/:id (delete one)
 router.delete('/:id', async (req, res) => {
   try {
-    const deleted = await Rule.destroy({ where: { id: req.params.id } });
+    const deleted = await Rules.destroy({ where: { id: req.params.id } });
     if (!deleted) return res.status(404).json({ error: 'Rule not found' });
     res.json({ message: 'Rule deleted' });
   } catch (err) {
@@ -103,7 +103,7 @@ router.get('/../evaluation', async (req, res) => {
     }
 
     // Get all rules
-    const allRules = await Rule.findAll();
+    const allRules = await Rules.findAll();
     const results = [];
     for (const rule of allRules) {
       let condition = rule.condition;

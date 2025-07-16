@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const Rule = sequelize.define(
-    "rule",
+  const Rules = sequelize.define(
+    "rules",
     {
       id: {
         type: DataTypes.INTEGER,
@@ -15,10 +15,10 @@ module.exports = (sequelize, DataTypes) => {
     {
       timestamps: true,
       freezeTableName: true,
-      tableName: "rule",
+      tableName: "rules",
     },
 
   );
 
-  return Rule;
+  return Rules;
 };
