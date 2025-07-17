@@ -1,0 +1,38 @@
+extends layout
+
+block content
+  h1 Shopify Products
+  .products-grid
+    each product in products
+      .product-card
+        if product.image && product.image.src
+          img(src=product.image.src, alt=product.title, width=150)
+        h2= product.title
+        if product.variants && product.variants.length
+          p Price: $#{product.variants[0].price}
+        else
+          p Price: N/A
+  .pagination
+    if page > 1
+      a(href=`/products?page=${page-1}`) Previous
+    a(href=`/products?page=${page+1}`) Next
+
+style.
+  .products-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .product-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 16px;
+    width: 200px;
+    box-shadow: 2px 2px 8px #eee;
+    text-align: center;
+  }
+  .product-card img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+  } 
