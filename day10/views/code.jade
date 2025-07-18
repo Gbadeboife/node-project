@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  h1 QR Code for Invoice
+  if qrDataUrl
+    img(src=qrDataUrl, alt='QR Code')
+    p
+      | Scan the QR code or 
+      a(href=qrUrl) click here
+      |  to download the invoice.
+  else
+    p Error generating QR code. 
