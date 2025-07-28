@@ -10,59 +10,60 @@
  */
 const fs = require('fs');
 const path = require('path');
-let Sequelize = require('sequelize');
+const Sequelize = require('sequelize');
 const { DataTypes } = require('sequelize');
 const basename = path.basename(__filename);
-const config = {
-  DB_DATABASE: 'mysql',
-  DB_USERNAME: 'root',
-  DB_PASSWORD: 'root',
-  DB_ADAPTER: 'mysql',
-  DB_NAME: 'day_1',
-  DB_HOSTNAME: 'localhost',
-  DB_PORT: 3306,
-};
+const env = process.env.NODE_ENV || 'development';
+const config = require('../config/database')[env];
+const logger = require('../core/logger');
 
 let db = {};
 
-let sequelize = new Sequelize(config.DB_DATABASE, config.DB_USERNAME, config.DB_PASSWORD, {
-  dialect: config.DB_ADAPTER,
-  username: config.DB_USERNAME,
-  password: config.DB_PASSWORD,
-  database: config.DB_NAME,
-  host: config.DB_HOSTNAME,
-  port: config.DB_PORT,
-  logging: console.log,
-  timezone: '-04:00',
-  pool: {
-    maxConnections: 1,
-    minConnections: 0,
-    maxIdleTime: 100,
-  },
-  define: {
-    timestamps: false,
-    underscoredAll: true,
-    underscored: true,
-  },
-});
+// Initialize Sequelize with database configuration
+let sequelize = new Sequelize(
+  config.database,
+  config.username,
+  config.password,
+  {
+    ...config,
+    pool: {
+      max: 5,      // Maximum number of connection in pool
+      min: 0,      // Minimum number of connection in pool
+      acquire: 30000, // Maximum time (ms) that pool will try to get connection before throwing error
+      idle: 10000  // Maximum time (ms) that a connection can be idle before being released
+    }
+  }
+);
 
-// sequelize.sync({ force: true });
+// Test database connection
+sequelize
+  .authenticate()
+  .then(() => {
+    logger.info('Database connection established successfully.');
+  })
+  .catch(err => {
+    logger.error('Unable to connect to the database:', err);
+  });
 
+// Import all model files from current directory
 fs.readdirSync(__dirname)
-  .filter((file) => {
+  .filter(file => {
     return file.indexOf('.') !== 0 && file !== basename && file.slice(-3) === '.js';
   })
-  .forEach((file) => {
-    var model = require(path.join(__dirname, file))(sequelize, DataTypes);
+  .forEach(file => {
+    // Initialize model with Sequelize instance
+    const model = require(path.join(__dirname, file))(sequelize, DataTypes);
     db[model.name] = model;
   });
 
-Object.keys(db).forEach((modelName) => {
+// Set up model associations
+Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
   }
 });
 
+// Attach sequelize instance and class to db object
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 

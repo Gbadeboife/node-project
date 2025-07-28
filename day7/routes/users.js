@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/user');
+const db = require('../models');
+const User = db.User;
 const Web3Service = require('../services/Web3Service');
 
 // GET /api/v1/user - get all users
@@ -24,11 +25,13 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST /api/v1/user - add one user
-router.post('/', async (req, res) => {
+
+// POST /api/v1/user/:id - add one user with specified id
+router.post('/:id', async (req, res) => {
   try {
     const { name, wallet_id } = req.body;
-    const user = await User.create({ name, wallet_id });
+    const id = req.params.id;
+    const user = await User.create({ id, name, wallet_id });
     res.status(201).json(user);
   } catch (err) {
     res.status(400).json({ error: err.message });

@@ -87,8 +87,6 @@ input:focus {
 <body>
 
         <div class="main">
-
-
                 <h1>Quiz</h1>
                 <div id="yourAnswers" class="hidden">
                     <h1 >Your answers</h1>
@@ -98,7 +96,7 @@ input:focus {
 
                     <h2 id="title"></h2>
                     <ul id ='selectionList'> </ul>
-                    <input id="short"  type="text" class="hidden"/>
+                    <input id="short" type="text" class="hidden"/>
                     <textarea name="" id="long" class="hidden" cols="30" rows="10"></textarea>
                 <div id="bool"></div>
                 <button id="next">Next</button>
@@ -106,58 +104,44 @@ input:focus {
         </div>
 
     <script>
-let quiz = [
-  {
-    id: 1,
-    type: "short_answer",
-    question: "Why is the sky blue?",
-    answers: [],
-    correct_answer: 0,
-  },
-  {
-    id: 2,
-    type: "multiple_choice",
-    question: "Why is the sky blue?",
-    answers: [
-      { id: 1, answer: "Because of physics" },
-      { id: 2, answer: "Because that the way it always was" },
-      { id: 3, answer: "I don't know" },
-    ],
-    correct_answer: 1,
-  },
-  {
-    id: 3,
-    type: "multiple_selection_choice",
-    question: "Why is the sky blue?",
-    answers: [
-      { id: 1, answer: "Because of physics" },
-      { id: 2, answer: "Because that the way it always was" },
-      { id: 3, answer: "I don't know" },
-    ],
-    correct_answer: 1,
-  },
-  {
-    id: 4,
-    type: "long_text",
-    question: "Why is the sky blue?",
-    answers: [],
-    correct_answer: 0,
-  },
-  {
-    id: 5,
-    type: "description",
-    question: "random text to show to the user",
-    answers: [],
-    correct_answer: 0,
-  },
-  {
-    id: 6,
-    type: "true_false",
-    question: "Is the sky blue",
-    answers: [],
-    correct_answer: 2,
-  },
-];
+// Fetch quiz data from API and initialize the quiz
+let quiz = [];
+
+fetch('/api/quiz')
+  .then(response => response.json())
+  .then(data => {
+    // Transform the API data to the expected quiz format
+    // For now, use the first quiz and its questions
+    if (Array.isArray(data) && data.length > 0) {
+      const apiQuiz = data[0];
+      quiz = apiQuiz.questions.map(q => {
+        let type = 'short_answer';
+        if (q.options && q.options.length > 0) {
+          if (q.options.length === 2 && q.options.some(opt => opt.text.toLowerCase() === 'true')) {
+            type = 'true_false';
+          } else if (q.options.length > 1) {
+            type = 'multiple_choice';
+          }
+        } else if (q.text && q.text.length > 100) {
+          type = 'long_text';
+        }
+        return {
+          id: q.id,
+          type: type,
+          question: q.text,
+          answers: (q.options || []).map(opt => ({ id: opt.id, answer: opt.text })),
+          correct_answer: (q.options || []).findIndex(opt => opt.is_correct),
+        };
+      });
+    }
+    if (quiz.length > 0) {
+      populateQuestion(i);
+    }
+  })
+  .catch(err => {
+    alert('Failed to load quiz data from API.');
+    console.error(err);
+  });
 
 let nextButton = document.getElementById("next");
 let title = document.getElementById("title");
@@ -230,9 +214,9 @@ function populateQuestion(qNum) {
 
   if (individualQuestion.type == "short_answer") {
     selectionList.innerHTML = "";
-    short.classList.toggle("hidden");
-    short.classList.add("current");
-    short.placeholder = "your reason here";
+    inp.classList.toggle("hidden");
+    inp.classList.add("current");
+    inp.placeholder = "your reason here";
   } else if (
     individualQuestion.type == "multiple_choice" ||
     individualQuestion.type == "multiple_selection_choice"
@@ -248,9 +232,9 @@ function populateQuestion(qNum) {
     individualQuestion.type == "description"
   ) {
     selectionList.innerHTML = "";
-    long.classList.toggle("hidden");
-    long.classList.add("current");
-    long.placeholder = "your reason here";
+    text.classList.toggle("hidden");
+    text.classList.add("current");
+    text.placeholder = "your reason here";
   } else if (individualQuestion.type == "true_false") {
     selectionList.innerHTML = "";
     bool.appendChild(createLi("bool", "True"));
@@ -270,7 +254,7 @@ function createLi(name, choiceText) {
 }
 
 //call function at the beginning
-populateQuestion(i);
+// populateQuestion(i); // This line is now handled by the fetch call
 
     </script>
 </body>

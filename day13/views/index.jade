@@ -1,5 +1,16 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  h1.mb-4= title
+  .row
+    each product in products
+      .col-md-4.mb-4
+        .card
+          if product.image
+            img.card-img-top(src=product.image, alt=product.title)
+          .card-body
+            h5.card-title= product.title
+            p.card-text= product.description
+            p.card-text
+              strong $#{product.price}
+            a.btn.btn-primary(href='/product/' + product.id) View Details

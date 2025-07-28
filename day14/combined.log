@@ -1,0 +1,13 @@
+{"level":"error","message":"Error in main execution: Bad control character in string literal in JSON at position 54","stack":"SyntaxError: Bad control character in string literal in JSON at position 54\n    at JSON.parse (<anonymous>)\n    at main (C:\\Users\\gbade\\Documents\\MKD\\internship_node\\day14\\src\\index.js:12:25)","timestamp":"2025-07-22T19:58:58.574Z"}
+{"level":"error","message":"Error in main execution: Bad control character in string literal in JSON at position 54","stack":"SyntaxError: Bad control character in string literal in JSON at position 54\n    at JSON.parse (<anonymous>)\n    at main (C:\\Users\\gbade\\Documents\\MKD\\internship_node\\day14\\src\\index.js:12:25)","timestamp":"2025-07-22T20:38:53.203Z"}
+{"level":"info","message":"Generated model file: C:\\Users\\gbade\\Documents\\MKD\\internship_node\\day14\\release\\models\\location.js","timestamp":"2025-07-22T20:42:56.994Z"}
+{"level":"info","message":"Generated model file: C:\\Users\\gbade\\Documents\\MKD\\internship_node\\day14\\release\\models\\email.js","timestamp":"2025-07-22T20:42:57.000Z"}
+{"level":"info","message":"Generated model file: C:\\Users\\gbade\\Documents\\MKD\\internship_node\\day14\\release\\models\\sms.js","timestamp":"2025-07-22T20:42:57.002Z"}
+{"level":"info","message":"Generated model file: C:\\Users\\gbade\\Documents\\MKD\\internship_node\\day14\\release\\models\\user.js","timestamp":"2025-07-22T20:42:57.004Z"}
+{"level":"info","message":"Model generation completed successfully","timestamp":"2025-07-22T20:42:57.004Z"}
+{"level":"info","message":"Generated controller file: C:\\Users\\gbade\\Documents\\MKD\\internship_node\\day14\\release\\controllers\\locationController.js","timestamp":"2025-07-22T20:42:57.006Z"}
+{"level":"info","message":"Generated controller file: C:\\Users\\gbade\\Documents\\MKD\\internship_node\\day14\\release\\controllers\\emailController.js","timestamp":"2025-07-22T20:42:57.008Z"}
+{"level":"info","message":"Generated controller file: C:\\Users\\gbade\\Documents\\MKD\\internship_node\\day14\\release\\controllers\\smsController.js","timestamp":"2025-07-22T20:42:57.010Z"}
+{"level":"info","message":"Generated controller file: C:\\Users\\gbade\\Documents\\MKD\\internship_node\\day14\\release\\controllers\\userController.js","timestamp":"2025-07-22T20:42:57.011Z"}
+{"level":"info","message":"Controller generation completed successfully","timestamp":"2025-07-22T20:42:57.012Z"}
+{"level":"info","message":"Successfully generated all files","timestamp":"2025-07-22T20:42:57.013Z"}

@@ -1,0 +1,229 @@
+openapi: 3.0.0
+info:
+  title: TreeQL API
+  description: A RESTful API for managing tree-structured data
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000/api/v1
+    description: Development server
+
+paths:
+  /nodes:
+    post:
+      summary: Create a new node
+      tags:
+        - Nodes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NodeInput'
+      responses:
+        '201':
+          description: Node created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /nodes/{id}:
+    get:
+      summary: Get a node and its children
+      tags:
+        - Nodes
+      parameters:
+        - $ref: '#/components/parameters/nodeId'
+      responses:
+        '200':
+          description: Node retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    put:
+      summary: Update a node
+      tags:
+        - Nodes
+      parameters:
+        - $ref: '#/components/parameters/nodeId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NodeUpdateInput'
+      responses:
+        '200':
+          description: Node updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    delete:
+      summary: Delete a node
+      tags:
+        - Nodes
+      parameters:
+        - $ref: '#/components/parameters/nodeId'
+      responses:
+        '204':
+          description: Node deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /nodes/{id}/move:
+    post:
+      summary: Move a node to a new parent
+      tags:
+        - Nodes
+      parameters:
+        - $ref: '#/components/parameters/nodeId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newParentId:
+                  type: integer
+                  nullable: true
+              required:
+                - newParentId
+      responses:
+        '200':
+          description: Node moved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+components:
+  parameters:
+    nodeId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+      description: The ID of the node
+
+  schemas:
+    NodeInput:
+      type: object
+      properties:
+        name:
+          type: string
+        parentId:
+          type: integer
+          nullable: true
+        data:
+          type: object
+          nullable: true
+      required:
+        - name
+
+    NodeUpdateInput:
+      type: object
+      properties:
+        name:
+          type: string
+        parentId:
+          type: integer
+          nullable: true
+        data:
+          type: object
+          nullable: true
+
+    Node:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        parentId:
+          type: integer
+          nullable: true
+        data:
+          type: object
+          nullable: true
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/Node'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    NodeResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success]
+        data:
+          type: object
+          properties:
+            node:
+              $ref: '#/components/schemas/Node'
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    ServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Error:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [error]
+        message:
+          type: string 

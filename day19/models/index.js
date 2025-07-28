@@ -1,52 +1,60 @@
 'use strict';
-/*Powered By: Manaknightdigital Inc. https://manaknightdigital.com/ Year: 2020*/
-/**
- * Sequelize File
- * @copyright 2020 Manaknightdigital Inc.
- * @link https://manaknightdigital.com
- * @license Proprietary Software licensing
- * @author Ryan Wong
- *
- */
+
 const fs = require('fs');
 const path = require('path');
-let Sequelize = require('sequelize');
+const Sequelize = require('sequelize');
+const config = require('../config/database')[process.env.NODE_ENV || 'development'];
 const basename = path.basename(__filename);
-const { DataTypes } = require('sequelize');
-const config = {
-  DB_DATABASE: 'mysql',
-  DB_USERNAME: 'root',
-  DB_PASSWORD: 'root',
-  DB_ADAPTER: 'mysql',
-  DB_NAME: 'day_1',
-  DB_HOSTNAME: 'localhost',
-  DB_PORT: 3306,
-};
 
-let db = {};
 
-let sequelize = new Sequelize(config.DB_DATABASE, config.DB_USERNAME, config.DB_PASSWORD, {
-  dialect: config.DB_ADAPTER,
-  username: config.DB_USERNAME,
-  password: config.DB_PASSWORD,
-  database: config.DB_NAME,
-  host: config.DB_HOSTNAME,
-  port: config.DB_PORT,
-  logging: console.log,
-  timezone: '-04:00',
-  pool: {
-    maxConnections: 1,
-    minConnections: 0,
-    maxIdleTime: 100,
-  },
-  define: {
-    timestamps: false,
-    underscoredAll: true,
-    underscored: true,
-  },
+// Initialize database connection
+const sequelize = new Sequelize(
+  config.database,
+  config.username,
+  config.password,
+  {
+    host: config.host,
+    dialect: config.dialect,
+    logging: false,
+    timezone: 'UTC',
+    define: {
+      timestamps: true,
+      underscored: true
+    }
+  }
+);
+
+const db = {};
+
+// Read all model files and initialize them
+fs.readdirSync(path.join(__dirname))
+  .filter(file => {
+    return (
+      file.indexOf('.') !== 0 &&
+      file !== basename &&
+      file.slice(-3) === '.js'
+    );
+  })
+  .forEach(file => {
+    const model = require(path.join(__dirname, file))(
+      sequelize,
+      Sequelize.DataTypes
+    );
+    db[model.name] = model;
+  });
+
+// Set up model associations if any
+Object.keys(db).forEach(modelName => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
 });
 
-// sequelize.sync({ force: true });
+// Add sequelize instance and Sequelize class to db object
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
+
+module.exports = db;
 
 fs.readdirSync(__dirname)
   .filter((file) => {

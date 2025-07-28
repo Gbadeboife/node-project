@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const location = sequelize.define(
-    "location",
+  const Location = sequelize.define(
+    "Location",
     {
       id: {
         type: DataTypes.INTEGER,
@@ -22,5 +22,5 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  return location;
+  return Location;
 };

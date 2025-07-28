@@ -10,58 +10,50 @@
  */
 const fs = require('fs');
 const path = require('path');
-let Sequelize = require('sequelize');
+const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
-const { DataTypes } = require('sequelize');
-const config = {
-  DB_DATABASE: 'mysql',
-  DB_USERNAME: 'root',
-  DB_PASSWORD: 'root',
-  DB_ADAPTER: 'mysql',
-  DB_NAME: 'day_1',
-  DB_HOSTNAME: 'localhost',
-  DB_PORT: 3306,
-};
+const env = process.env.NODE_ENV || 'development';
+const config = require('../config/database')[env];
+const logger = require('../services/LoggerService');
 
 let db = {};
 
-let sequelize = new Sequelize(config.DB_DATABASE, config.DB_USERNAME, config.DB_PASSWORD, {
-  dialect: config.DB_ADAPTER,
-  username: config.DB_USERNAME,
-  password: config.DB_PASSWORD,
-  database: config.DB_NAME,
-  host: config.DB_HOSTNAME,
-  port: config.DB_PORT,
-  logging: console.log,
-  timezone: '-04:00',
-  pool: {
-    maxConnections: 1,
-    minConnections: 0,
-    maxIdleTime: 100,
-  },
-  define: {
-    timestamps: false,
-    underscoredAll: true,
-    underscored: true,
-  },
-});
+// Create Sequelize instance with config
+const sequelize = new Sequelize(
+  config.database,
+  config.username,
+  config.password,
+  config
+);
 
-// sequelize.sync({ force: true });
-
+// Load all models
 fs.readdirSync(__dirname)
-  .filter((file) => {
-    return file.indexOf('.') !== 0 && file !== basename && file.slice(-3) === '.js';
+  .filter(file => {
+    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
   })
-  .forEach((file) => {
-    var model = require(path.join(__dirname, file))(sequelize, DataTypes);
+  .forEach(file => {
+    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
     db[model.name] = model;
   });
 
-Object.keys(db).forEach((modelName) => {
+// Set up model associations
+Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
   }
 });
+
+// Add sync function
+db.sync = async (force = false) => {
+  try {
+    logger.info('Syncing database...');
+    await sequelize.sync({ force });
+    logger.info('Database sync completed');
+  } catch (error) {
+    logger.error('Database sync failed:', error);
+    throw error;
+  }
+};
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;

@@ -13,38 +13,30 @@ const path = require('path');
 let Sequelize = require('sequelize');
 const basename = path.basename(__filename);
 const { DataTypes } = require('sequelize');
-const config = {
-  DB_DATABASE: 'mysql',
-  DB_USERNAME: 'root',
-  DB_PASSWORD: 'root',
-  DB_ADAPTER: 'mysql',
-  DB_NAME: 'day_1',
-  DB_HOSTNAME: 'localhost',
-  DB_PORT: 3306,
-};
+const env = process.env.NODE_ENV || 'development';
+const config = require('../config/config.js')[env];
 
 let db = {};
 
-let sequelize = new Sequelize(config.DB_DATABASE, config.DB_USERNAME, config.DB_PASSWORD, {
-  dialect: config.DB_ADAPTER,
-  username: config.DB_USERNAME,
-  password: config.DB_PASSWORD,
-  database: config.DB_NAME,
-  host: config.DB_HOSTNAME,
-  port: config.DB_PORT,
-  logging: console.log,
-  timezone: '-04:00',
-  pool: {
-    maxConnections: 1,
-    minConnections: 0,
-    maxIdleTime: 100,
-  },
-  define: {
-    timestamps: false,
-    underscoredAll: true,
-    underscored: true,
-  },
-});
+let sequelize = new Sequelize(
+  config.database,
+  config.username,
+  config.password,
+  {
+    host: config.host,
+    dialect: config.dialect,
+    logging: config.logging,
+    define: {
+      timestamps: true,
+      underscored: true
+    },
+    pool: {
+      max: 5,
+      min: 0,
+      idle: 10000
+    }
+  }
+);
 
 // sequelize.sync({ force: true });
 

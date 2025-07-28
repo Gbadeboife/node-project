@@ -7,7 +7,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     order_id: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      references: {
+        model: 'Order', 
+        key: 'id'
+      }
     },
     user_id: {
       type: DataTypes.INTEGER,
@@ -23,10 +27,24 @@ module.exports = (sequelize, DataTypes) => {
     },
     notes: {
       type: DataTypes.STRING
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW
     }
   }, {
     tableName: 'transaction',
     timestamps: false
   });
+
+  // Define association
+  Transaction.associate = (models) => {
+    Transaction.belongsTo(models.Order, {
+      foreignKey: 'order_id',
+      as: 'Order'
+    });
+  };
+
   return Transaction;
 }; 

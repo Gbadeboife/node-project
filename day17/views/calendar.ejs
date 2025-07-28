@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Select Date and Time</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <h3>Pick a date and time</h3>
+            <p>Duration: 1 hour</p>
+            <p>Your timezone: <span id="selected-timezone"><%= selectedTimezone ? selectedTimezone : '' %></span> <a href="#" class="change-link">(Change)</a></p>
+        </div>
+        <div class="calendar-grid">
+            <table class="calendar-table">
+                <thead>
+                    <tr>
+                        <% days.forEach(function(day) { %>
+                            <th>
+                                <div class="date"><%= day.displayDate %></div>
+                                <div class="weekday"><%= day.weekday %></div>
+                            </th>
+                        <% }); %>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% timeSlots.forEach(function(row) { %>
+                        <tr>
+                            <% row.forEach(function(slot) { %>
+                                <td>
+                                    <a href="/form?scheduleId=<%= slot.value %>"><%= slot.label %></a>
+                                </td>
+                            <% }); %>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="/javascripts/calendar.js"></script>
+</body>
+</html>

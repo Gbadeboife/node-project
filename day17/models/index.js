@@ -13,13 +13,13 @@ const path = require('path');
 let Sequelize = require('sequelize');
 const basename = path.basename(__filename);
 const { DataTypes } = require('sequelize');
+require('dotenv').config();
 const config = {
-  DB_DATABASE: 'mysql',
-  DB_USERNAME: 'root',
-  DB_PASSWORD: 'root',
+  DB_DATABASE: process.env.DB_NAME || 'scheduler_development',
+  DB_USERNAME: process.env.DB_USERNAME || 'root',
+  DB_PASSWORD: process.env.DB_PASSWORD || '',
   DB_ADAPTER: 'mysql',
-  DB_NAME: 'day_1',
-  DB_HOSTNAME: 'localhost',
+  DB_HOSTNAME: process.env.DB_HOST || 'localhost',
   DB_PORT: 3306,
 };
 
@@ -53,8 +53,11 @@ fs.readdirSync(__dirname)
     return file.indexOf('.') !== 0 && file !== basename && file.slice(-3) === '.js';
   })
   .forEach((file) => {
-    var model = require(path.join(__dirname, file))(sequelize, DataTypes);
-    db[model.name] = model;
+    const model = require(path.join(__dirname, file));
+    if (typeof model === 'function') {
+      const sequelizeModel = model(sequelize, DataTypes);
+      db[sequelizeModel.name] = sequelizeModel;
+    }
   });
 
 Object.keys(db).forEach((modelName) => {

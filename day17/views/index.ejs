@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Schedule Meeting</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div class="timezone-container">
+        <h1>Calendar</h1>
+        <div class="timezone-picker">
+            <div class="timezone-header">
+                <h3>Pick a date and time</h3>
+                <p>Duration: 1 hour</p>
+                <div class="timezone-select">
+                    <label>Your timezone: Please select</label>
+                </div>
+            </div>
+            <div class="timezone-grid">
+                <div class="toggle-container">
+                    <span class="toggle-label">am/pm</span>
+                    <label class="switch">
+                        <input type="checkbox" id="time-format-toggle">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="toggle-label">24hr</span>
+                </div>
+                <div class="timezone-regions">
+                    <h4>TIME ZONE</h4>
+                    <div class="region-list">
+                        <% for (let i = 0; i < timezones.length; i += 2) { %>
+                            <div class="region-row">
+                                <% for (let j = i; j < i + 2 && j < timezones.length; j++) { %>
+                                    <div class="region-section">
+                                        <h5><%= timezones[j].name %></h5>
+                                        <% timezones[j].zones.forEach(function(zone) { %>
+                                            <div class="zone-item">
+                                                <button class="timezone-btn" type="button" aria-label="Select timezone <%= zone.label %>"></button>
+                                                <span><%= zone.label %></span>
+                                            </div>
+                                        <% }); %>
+                                    </div>
+                                <% } %>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/javascripts/timezone.js"></script>
+</body>
+</html>

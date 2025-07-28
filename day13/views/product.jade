@@ -1,0 +1,61 @@
+extends layout
+
+block content
+  .row
+    .col-md-6
+      if product.image
+        img.img-fluid(src=product.image, alt=product.title)
+    .col-md-6
+      h1= product.title
+      p.lead= product.description
+      p.h3.mb-4 $#{product.price}
+      button#checkout-button.btn.btn-primary.btn-lg Buy Now
+
+  #checkout-modal.modal.fade(tabindex='-1')
+    .modal-dialog
+      .modal-content
+        .modal-header
+          h5.modal-title Checkout
+          button.close(type='button', data-dismiss='modal')
+            span &times;
+        .modal-body
+          p Processing your payment...
+        .modal-footer
+          button.btn.btn-secondary(type='button', data-dismiss='modal') Cancel
+
+  script.
+    const stripe = Stripe('#{stripePublicKey}');
+    const checkoutButton = document.getElementById('checkout-button');
+    const modal = $('#checkout-modal');
+
+    checkoutButton.addEventListener('click', function() {
+      modal.modal('show');
+      
+      fetch('/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productId: '#{product.id}'
+        })
+      })
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(session) {
+        return stripe.redirectToCheckout({ sessionId: session.id });
+      })
+      .then(function(result) {
+        if (result.error) {
+          alert(result.error.message);
+        }
+      })
+      .catch(function(error) {
+        console.error('Error:', error);
+        alert('Something went wrong. Please try again.');
+      })
+      .finally(function() {
+        modal.modal('hide');
+      });
+    }); 

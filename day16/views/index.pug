@@ -1,0 +1,38 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Fabric.js Editor
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js")
+        link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css")
+        link(rel="stylesheet", href="/css/style.css")
+    body
+        .menu
+            .menu-item(data-type="background")
+                i.fas.fa-fill-drip
+                | Background
+            .menu-item(data-type="text")
+                i.fas.fa-font
+                | Text
+            .menu-item(data-type="image")
+                i.fas.fa-image
+                | Image
+        #sidebar.sidebar
+        .main-content
+            .topbar
+                span#deleteBtn.trash-icon(style="display: none;")
+                    i.fas.fa-trash
+                button.download-btn
+                    i.fas.fa-download
+                    | Download
+            .canvas-container
+                canvas#canvas
+                .controls
+                    select#fontSize(style="display: none;")
+                        option(value="60") 60
+                        option(value="48") 48
+                        option(value="36") 36
+                        option(value="24") 24
+                        option(value="18") 18
+        script(src="/js/script.js")

@@ -1,7 +1,6 @@
-const Web3 = require('web3');
-// You can replace this with your Alchemy or Infura endpoint
+const Web3 = require('web3').default;
 const providerUrl = process.env.WEB3_PROVIDER_URL || 'https://eth-goerli.g.alchemy.com/v2/demo';
-const web3 = new Web3(new Web3.providers.HttpProvider(providerUrl));
+const web3 = new Web3(providerUrl);
 
 const createWallet = () => {
   const account = web3.eth.accounts.create();

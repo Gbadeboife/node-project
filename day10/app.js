@@ -1,27 +1,64 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+require('dotenv').config(); // Load environment variables
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const morgan = require('morgan');
+const cors = require('cors');
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+// Import custom modules
+const logger = require('./config/logger');
+const db = require('./models');
+const { securityMiddleware, responseFormatter } = require('./middleware');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
 
-const db = require("./models");
-var cors = require("cors");
+// Swagger configuration
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Day 10 API Documentation',
+      version: '1.0.0',
+      description: 'API documentation for Day 10 project'
+    },
+    servers: [
+      {
+        url: `http://localhost:${process.env.PORT || 3000}`
+      }
+    ]
+  },
+  apis: ['./routes/*.js'] // Path to the API docs
+};
 
-var app = express();
-app.set("db", db);
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+
+// Initialize express app
+const app = express();
+app.set('db', db);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+// Apply security middleware
 app.use(cors());
-app.use(logger('dev'));
+securityMiddleware.forEach(middleware => app.use(middleware));
+
+// Apply basic middleware
+app.use(morgan('combined', { stream: { write: message => logger.info(message.trim()) } }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Apply custom middleware
+app.use(responseFormatter);
+
+// API Documentation route
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+// Routes
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 

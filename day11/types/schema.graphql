@@ -162,6 +162,49 @@ type StepsImagesResponse {
   code: String
 }
 
+# Movie type representing a film in the database
+type Movie {
+  id: ID!
+  title: String!
+  director_id: Int!
+  main_genre: String!
+  status: String!
+  review: String
+  director: Director
+  reviews: [Review!]
+  actors: [Actor!]
+  genres: [Genre!]
+}
+
+# Review type for movie reviews
+type Review {
+  id: ID!
+  notes: String!
+  movie_id: Int!
+  movie: Movie
+}
+
+# Director type representing film directors
+type Director {
+  id: ID!
+  name: String!
+  movies: [Movie!]
+}
+
+# Actor type representing film actors
+type Actor {
+  id: ID!
+  name: String!
+  movies: [Movie!]
+}
+
+# Genre type for movie categories
+type Genre {
+  id: ID!
+  name: String!
+  movies: [Movie!]
+}
+
 type Query {
   user: UserResponse! @verifyUser
 
@@ -174,6 +217,15 @@ type Query {
   link: LinkResponse! @verifyUser
 
   getStepsImages: StepsImagesResponse!
+
+  # Get all movies
+  movies: [Movie!]!
+  
+  # Get a single movie by ID
+  movie(id: ID!): Movie
+  
+  # Get movies with review count greater than specified number
+  moviesWithReviewCount(minReviews: Int!): [Movie!]!
 }
 
 type Mutation {
@@ -210,4 +262,6 @@ type Mutation {
   deleteCustomImage(id: ID!): MutationResponse! @verifyUser
 
   uploadFile(file: Upload!): FileUploadResponse!
+
+  addActorToMoviesByGenre(actorId: ID!, genreName: String!): MutationResponse!
 }

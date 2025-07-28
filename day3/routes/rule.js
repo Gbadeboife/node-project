@@ -1,17 +1,29 @@
-var express = require('express');
-var router = express.Router();
-const db = require('../models');
-const { Rules } = db;
-const { Variable } = db;
-const atob = (str) => Buffer.from(str, 'base64').toString('utf-8');
+const express = require('express');
+const router = express.Router();
+const RuleService = require('../services/ruleService');
+const validateRequest = require('../middleware/validator');
+const logger = require('../utils/logger');
 
-// GET /api/v1/rules (get all)
-router.get('/', async (req, res) => {
+/**
+ * @swagger
+ * /rules:
+ *   get:
+ *     summary: Get all rules
+ *     responses:
+ *       200:
+ *         description: List of all rules
+ *       500:
+ *         description: Server error
+ */
+router.get('/', async (req, res, next) => {
   try {
-    const allRules = await Rules.findAll();
-    res.json(allRules);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const rules = await RuleService.getAllRules();
+    res.json({
+      success: true,
+      data: rules
+    });
+  } catch (error) {
+    next(error);
   }
 });
 

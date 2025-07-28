@@ -3,17 +3,30 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "docs": "swagger-jsdoc -d swagger.js -o public/swagger.json"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
     "debug": "~2.6.9",
+    "dotenv": "^17.2.0",
+    "ejs": "^3.1.10",
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
+    "moment-timezone": "^0.6.0",
     "morgan": "~1.9.1",
     "mysql2": "^2.3.3",
     "sequelize": "^6.15.1"
+  },
+  "devDependencies": {
+    "jest": "^30.0.5",
+    "node-input-validator": "^4.5.1",
+    "supertest": "^7.1.4",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   }
 }

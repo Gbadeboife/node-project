@@ -19,16 +19,17 @@ const formatValidationError = (error) => {
 module.exports = {
   /**
    * Input Validator middleware for controller
-   * @param {object} validationObject object defining body fields and its validation types eg:{email:required|email}
-   * @param {object} _extendMessages object defining message to throw on validation error eg: {"email.required":"Email is required","email.email":"Invalid email"}
-   *
+   * @param {object} validationObject object defining fields and validation types
+   * @param {object} _extendMessages object defining message to throw on validation error
+   * @param {string} source 'body' or 'query' - where to look for parameters
    */
-  validateInput: (validationObject = {}, _extendMessages = {}) => async (
+  validateInput: (validationObject = {}, _extendMessages = {}, source = 'body') => async (
     req,
     res,
     next,
   ) => {
-    const validation = new Validator(req.body, validationObject);
+    const dataToValidate = source === 'query' ? req.query : req.body;
+    const validation = new Validator(dataToValidate, validationObject);
     addCustomMessages(_extendMessages);
 
     try {
@@ -78,7 +79,7 @@ module.exports = {
       } else {
         error = req.validationError;
       }
-      return res.json({ success: false, error });
+      return res.status(400).json({ success: false, error });
     }
     next();
   },

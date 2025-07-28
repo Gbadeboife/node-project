@@ -3,11 +3,12 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./swagger');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/user');
 var emailRouter = require('./routes/email');
-var userRouter = require('./routes/user');
 
 const db = require("./models");
 var cors = require("cors");
@@ -44,5 +45,8 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+// Swagger API Documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 module.exports = app;

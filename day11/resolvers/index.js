@@ -25,7 +25,18 @@ const uploadFileMutationResolver = require('./custom/uploadFile');
 
 const connectionStepsResolver = require('./custom/connectionSteps');
 
+// Import type resolvers
+const Movie = require('./type/typeMovie');
 
+// Import query resolvers
+const movies = require('./all/allMovies');
+const movie = require('./single/singleMovie');
+const moviesWithReviewCount = require('./custom/moviesWithReviewCount');
+
+// Import mutation resolvers
+const addActorToMoviesByGenre = require('./custom/addActorToMoviesByGenre');
+
+// Combine all resolvers
 module.exports = {
   Upload: GraphQLUpload,
   Query: {
@@ -34,7 +45,10 @@ module.exports = {
     ...calendarResolver.Query,
     ...customImageResolver.Query,
     ...noteResolver.Query,
-    ...connectionStepsResolver.Query
+    ...connectionStepsResolver.Query,
+    movies,
+    movie,
+    moviesWithReviewCount
   },
   Mutation: {
     updateUser: updateUserResolver,
@@ -44,6 +58,7 @@ module.exports = {
     ...calendarResolver.Mutation,
     ...customImageResolver.Mutation,
     ...noteResolver.Mutation,
+    addActorToMoviesByGenre
   },
 
   ...calendarResolver.Type,
@@ -51,4 +66,5 @@ module.exports = {
 
   User: typeUserResolver,
   Link: typeLinkResolver,
+  Movie,
 };

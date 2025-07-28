@@ -24,9 +24,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       validate: { isIn: [[0, 1]] } // 0: not paid, 1: paid
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW
     }
   }, {
-    tableName: 'order',
+    tableName: 'Order', 
     timestamps: false
   });
   return Order;

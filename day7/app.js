@@ -1,13 +1,23 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const morgan = require('morgan');
+const logger = require('./services/LoggerService');
+const swagger = require('./config/swagger');
+const config = require('./config/config');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
 
 const db = require("./models");
+db.sequelize.sync()
+  .then(() => {
+    logger.info('Database & tables created successfully');
+  })
+  .catch(err => {
+    logger.error('Error syncing database:', err);
+  });
 var cors = require("cors");
 
 var app = express();
@@ -22,6 +32,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// API Documentation
+app.use('/api-docs', swagger.serve, swagger.setup);
+
+// Routes
 app.use('/', indexRouter);
 app.use('/api/v1/user', usersRouter);
 

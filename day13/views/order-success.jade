@@ -1,0 +1,23 @@
+extends layout
+
+block content
+  .card
+    .card-body
+      h1.card-title.text-success Thank you for your purchase!
+      .table-responsive
+        table.table.table-bordered.mt-4
+          thead.thead-light
+            tr
+              th Product
+              th Price
+              th Payment Method
+              th Status
+          tbody
+            tr
+              td= product.title
+              td $#{order.total}
+              td Credit Card (Stripe)
+              td
+                span.badge.badge-success= order.status
+      
+      a.btn.btn-primary.mt-4(href='/') Continue Shopping 
