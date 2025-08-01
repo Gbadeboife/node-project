@@ -42,9 +42,14 @@ router.get('/', async (req, res) => {
 // GET /api/v1/order/sort (pagination + sorting)
 router.get('/sort', async (req, res) => {
   try {
-    let { page, limit, sort, direction } = req.query;
+    let { page = 1, limit = 10, sort = 'createdAt', direction = 'DESC' } = req.query;
     page = parseInt(page);
     limit = parseInt(limit);
+
+    // Fallbacks for invalid page/limit values
+    if (isNaN(page) || page < 1) page = 1;
+    if (isNaN(limit) || limit < 1) limit = 10;
+
     direction = direction.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
     const offset = (page - 1) * limit;
     const { count, rows } = await Order.findAndCountAll({
@@ -52,11 +57,13 @@ router.get('/sort', async (req, res) => {
       limit,
       offset
     });
+    
     res.json({
       total: count,
       page,
       list: rows
     });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

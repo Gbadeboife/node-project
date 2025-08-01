@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const axios = require('axios');
+const { exec } = require('child_process');
 const { shopifyUrl } = require('../services/shopifyService');
 const logger = require('../services/LoggerService');
 const { validateInput, handleValidationErrorForViews } = require('../services/ValidationService');
@@ -63,13 +63,25 @@ router.get('/', [
 
     try {
       logger.info(`Fetching products page ${page} with limit ${limit}`);
-      const response = await axios.get(url);
-      viewModel.products = response.data.products || [];
-      viewModel.page = page;
-      viewModel.limit = limit;
-      
-      logger.info(`Successfully fetched ${viewModel.products.length} products`);
-      res.render('products', viewModel);
+      exec(`curl -s "${url}"`, (error, stdout, stderr) => {
+        if (error) {
+          logger.error('Error fetching products:', error);
+          viewModel.error = 'Error fetching products. Please try again later.';
+          return res.status(500).render('products', viewModel);
+        }
+        try {
+          const data = JSON.parse(stdout);
+          viewModel.products = data.products || [];
+          viewModel.page = page;
+          viewModel.limit = limit;
+          logger.info(`Successfully fetched ${viewModel.products.length} products`);
+          res.render('products', viewModel);
+        } catch (parseErr) {
+          logger.error('Error parsing products response:', parseErr);
+          viewModel.error = 'Error parsing products response.';
+          res.status(500).render('products', viewModel);
+        }
+      });
     } catch (err) {
       logger.error('Error fetching products:', err);
       viewModel.error = 'Error fetching products. Please try again later.';

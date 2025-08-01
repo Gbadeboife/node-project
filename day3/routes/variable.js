@@ -80,11 +80,17 @@ router.get('/:id', async (req, res, next) => {
  */
 router.post('/:id', validateRequest(variableSchema), async (req, res, next) => {
   try {
+    const allowedTypes = ['STRING', 'FLOAT', 'INTEGER'];
+    if (!allowedTypes.includes(req.body.type)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid variable type. Allowed types are: ${allowedTypes.join(', ')}`
+      });
+    }
     const variable = await VariableService.createVariable({
       id: req.params.id,
       ...req.body
     });
-    
     logger.info(`Variable created with ID: ${variable.id}`);
     res.status(201).json({
       success: true,
@@ -104,6 +110,13 @@ router.post('/:id', validateRequest(variableSchema), async (req, res, next) => {
  */
 router.put('/:id', validateRequest(variableSchema), async (req, res, next) => {
   try {
+    const allowedTypes = ['STRING', 'FLOAT', 'INTEGER'];
+    if (!allowedTypes.includes(req.body.type)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid variable type. Allowed types are: ${allowedTypes.join(', ')}`
+      });
+    }
     const variable = await VariableService.updateVariable(req.params.id, req.body);
     logger.info(`Variable updated: ${req.params.id}`);
     res.json({

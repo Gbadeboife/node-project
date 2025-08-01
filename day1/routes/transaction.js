@@ -131,7 +131,7 @@ router.post('/',
         return ResponseHandler.notFound(res, 'Referenced order not found');
       }
 
-      const newTransaction = await Transaction.create(req.body, { transaction });
+      const newTransaction = await Transaction.create({ ...req.body, id: req.params.id }, { transaction });
       
       // Update order status or perform other related operations here
       

@@ -109,14 +109,14 @@ router.get('/:id', async (req, res) => {
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
  */
-router.post('/',
+router.post('/:id',
   validateInput(dockValidationRules, validationMessages),
   handleValidationErrorForAPI,
   async (req, res) => {
     const transaction = await db.sequelize.transaction();
     
     try {
-      const dock = await ShippingDock.create(req.body, { transaction });
+      const dock = await ShippingDock.create({ ...req.body, id: req.params.id }, { transaction });
       await transaction.commit();
       return ResponseHandler.success(res, dock, 'Shipping dock created successfully', 201);
     } catch (err) {

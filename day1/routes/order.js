@@ -147,14 +147,14 @@ router.get('/:id', async (req, res) => {
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/', 
+router.post('/:id', 
   validateInput(orderValidationRules, validationMessages),
   handleValidationErrorForAPI,
   async (req, res) => {
     const transaction = await db.sequelize.transaction();
     
     try {
-      const order = await Order.create(req.body, {
+      const order = await Order.create({ ...req.body, id: req.params.id }, {
         include: ['items'],
         transaction
       });
